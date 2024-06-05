@@ -10,24 +10,33 @@ public class CardFlip : MonoBehaviour
     [SerializeField] private Sprite cardBack;
 
     private Image cardImage; //the object component holding sprites.
-
-    private bool isFlipped = false;
+    private CardManager cardManager;
 
     private void Start()
     {
+        cardManager = GetComponent<CardManager>();
         cardImage = GetComponent<Image>();
+        ResetCard();
     }
     public void FlipCard()
     {
         if (cardImage == null) return; //if component doesn't exist.
 
-        if (isFlipped)
+        if (cardManager.isFlipped)
         {
-            cardImage.sprite = cardFront;
+            cardImage.sprite = cardBack;
+            cardManager.isFlipped = false;
         }
         else
         {
-            cardImage.sprite = cardBack;
+            cardImage.sprite = cardFront;
+            cardManager.isFlipped = true;
         }
+    }
+    private void ResetCard()
+    {
+        //called when placing new cards.
+        cardImage.sprite = cardBack; //default state
+        cardManager.isFlipped = false;
     }
 }
