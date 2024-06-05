@@ -9,12 +9,16 @@ public class CardFlip : MonoBehaviour
     [SerializeField] private Sprite cardFront;
     [SerializeField] private Sprite cardBack;
 
+    private CardTable cardTable;
     private Image cardImage; //the object component holding sprites.
     private CardManager cardManager;
     private GameManager gameManager;
+
+
     private void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        cardTable = GameObject.Find("CardTable").GetComponent<CardTable>();
 
         cardManager = GetComponent<CardManager>();
         cardImage = GetComponent<Image>();
@@ -31,10 +35,16 @@ public class CardFlip : MonoBehaviour
         }
         else
         {
+            //Debug.Log(GetComponent<CardManager>().cardType); //for testing
             cardImage.sprite = cardFront;
             cardManager.isFlipped = true;
         }
+        cardTable.HandleMatching();
         gameManager.totalCardFlips++;
+    }
+    public void ChangeCardFront(Sprite sprite)
+    {
+        cardFront = sprite;
     }
     private void ResetCard()
     {

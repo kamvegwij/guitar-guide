@@ -9,7 +9,12 @@ public class CardTable : MonoBehaviour
 
     public Transform table; //current table with grid layout
 
-    public List<CardManager> cardDeck;
+    public List<GameObject> spawnedCards;
+
+    public List<GameObject> flippedCards;
+    public List<GameObject> unflippedCards;
+
+    private int currentTotalFlipped = 0;
 
     private GameManager gameManager;
 
@@ -48,8 +53,11 @@ public class CardTable : MonoBehaviour
             for (int k = 0; k < col; k++)
             {
                 GameObject spawnCard = Instantiate(cardPrefab, table.position, Quaternion.identity);
-                spawnCard.name = cardPrefab.name + counter;
+                spawnCard.name = cardPrefab.name + counter; //every spawned card must be unique 
                 spawnCard.transform.SetParent(table, false);
+
+                spawnedCards.Add(spawnCard);
+
                 counter++;
             }
         }
@@ -57,7 +65,27 @@ public class CardTable : MonoBehaviour
     }
 
 
-    public void ShuffleCards()
+    public void HandleMatching()
+    {
+        flippedCards.Clear(); //cleanup before check.
+        unflippedCards.Clear();
+
+        //keep track of cards on the table.
+        for (int i = 0; i < spawnedCards.Count; i++)
+        {
+            CardManager currentCard = spawnedCards[i].GetComponent<CardManager>();
+            if (currentCard.isFlipped)
+            {
+                flippedCards.Add(currentCard.gameObject);
+            }
+            else
+            {
+                unflippedCards.Add(currentCard.gameObject);
+            }
+        }
+        currentTotalFlipped = flippedCards.Count;
+    }
+    private void ResetCards()
     {
         //
     }
