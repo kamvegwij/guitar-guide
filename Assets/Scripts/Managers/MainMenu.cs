@@ -6,17 +6,26 @@ using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    public GameManager gameManager;
     public Button playBtn;
     public Button quitBtn;
+
+    public Slider difficultySlider;
+
+    private GameManager gameManager;
 
     private void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         playBtn.onClick.AddListener(StartGame);
         quitBtn.onClick.AddListener(QuitGame);
+        difficultySlider.onValueChanged.AddListener(val => ToggleDifficulty());
     }
 
+    private void ToggleDifficulty()
+    {
+        gameManager.gameMode = (int)difficultySlider.value;
+
+    }
     public void ChangeScene()
     {
         int currentScene = SceneManager.GetActiveScene().buildIndex;

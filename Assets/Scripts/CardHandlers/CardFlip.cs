@@ -11,9 +11,11 @@ public class CardFlip : MonoBehaviour
 
     private Image cardImage; //the object component holding sprites.
     private CardManager cardManager;
-
+    private GameManager gameManager;
     private void Start()
     {
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
         cardManager = GetComponent<CardManager>();
         cardImage = GetComponent<Image>();
         ResetCard();
@@ -32,6 +34,7 @@ public class CardFlip : MonoBehaviour
             cardImage.sprite = cardFront;
             cardManager.isFlipped = true;
         }
+        gameManager.totalCardFlips++;
     }
     private void ResetCard()
     {
