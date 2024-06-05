@@ -1,18 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CardFlip : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private Sprite cardFront;
+    [SerializeField] private Sprite cardBack;
 
-    // Update is called once per frame
-    void Update()
+    private Image cardImage; //the object component holding sprites.
+
+    private bool isFlipped = false;
+
+    private void Start()
     {
-        
+        cardImage = GetComponent<Image>();
+    }
+    public void FlipCard()
+    {
+        if (cardImage == null) return; //if component doesn't exist.
+
+        if (isFlipped)
+        {
+            cardImage.sprite = cardFront;
+        }
+        else
+        {
+            cardImage.sprite = cardBack;
+        }
     }
 }
