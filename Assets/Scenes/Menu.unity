@@ -753,17 +753,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 580611278}
   m_CullTransparentMesh: 1
---- !u!114 &701889431 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7823560804638988661, guid: db2534fe1d0f30245864efb6b36429f3, type: 3}
-  m_PrefabInstance: {fileID: 7823560803880368445}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b4d63055cd3a7a49a928af3fb0b2c5a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &707142156
 GameObject:
   m_ObjectHideFlags: 0
@@ -881,7 +870,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 499005a7f3f505b47a0318e8487a0e8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameManager: {fileID: 701889431}
   playBtn: {fileID: 78601130}
   quitBtn: {fileID: 1880999562}
   difficultySlider: {fileID: 1303674166}

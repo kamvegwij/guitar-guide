@@ -18,6 +18,8 @@ public class MainMenu : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         playBtn.onClick.AddListener(StartGame);
         quitBtn.onClick.AddListener(QuitGame);
+
+        difficultySlider.value = 0; //default
         difficultySlider.onValueChanged.AddListener(val => ToggleDifficulty());
     }
 

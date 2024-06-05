@@ -55,4 +55,10 @@ public class CardTable : MonoBehaviour
         }
         
     }
+
+
+    public void ShuffleCards()
+    {
+        //
+    }
 }
