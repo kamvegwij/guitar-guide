@@ -17,6 +17,7 @@ public class CardTable : MonoBehaviour
     public List<GameObject> unflippedCards;
 
     public int currentTotalFlipped = 0;
+    public int cardsSpawnTotal = 0; //use this to scale
 
     public List<CardManager.CARD_TYPE> availableCardTypes;
 
@@ -58,17 +59,18 @@ public class CardTable : MonoBehaviour
         //this method changes the layout of the grid based on number of cards produced.
         switch(GameManager.gameMode)
         {
+            //cardsSpawnTotal = a * b
             case 0:
                 Debug.Log("Easy Mode");
                 DrawCards(2, 2);
                 break;
             case 1:
                 Debug.Log("Medium Mode");
-                DrawCards(4, 4);
+                DrawCards(2, 3);
                 break;
             case 2:
                 Debug.Log("Difficult Mode");
-                DrawCards(6, 6);
+                DrawCards(4, 6);
                 break;
             default:
                 break;
@@ -78,36 +80,38 @@ public class CardTable : MonoBehaviour
   
     private void DrawCards(int row, int col)
     {
+        cardsSpawnTotal = row * col; //how many cards to draw. n = a*b, we can get duplicate cards spawned from this value.
+
         int counter = 1;
         int cardTypeIndex = 0;
-        int cardTypeLen = availableCardTypes.Count; // int = 4
+        int total = availableCardTypes.Count; // int = 4
+
+        /*
+         * if cardsSpawnTotal == 4
+         *      then if cardIndex > 
+         */
         RandomCardOrder();
         for (int k = 0; k < row; k++)
         {
-            //int randomCardType = Random.Range(0, availableCardTypes.Count);
-
             for (int j = 0; j < col; j++)
             {
-                if (cardTypeIndex >= cardTypeLen) //duplicates
+                if (cardTypeIndex >= cardsSpawnTotal / 2) //duplicates
                 {
                     cardTypeIndex = 0;
                 }
-
                 GameObject spawnCard = Instantiate(cardPrefab, table.position, Quaternion.identity);
                 spawnCard.name = cardPrefab.name + counter; //every spawned card must be unique 
                 spawnCard.transform.SetParent(table, false);
                 spawnCard.GetComponent<CardManager>().cardType = availableCardTypes[cardTypeIndex]; //randomly spawn a card type.
                 spawnedCards.Add(spawnCard);
                 cardTypeIndex++;
-               
             }
-            
             counter++;
         }
-        
     }
     private void RandomCardOrder()
     {
+        //use this method to randomly sort the card deck.
         int count = availableCardTypes.Count;
         //int index = 0;
 
