@@ -27,8 +27,6 @@ public class CardTable : MonoBehaviour
     private CardManager.CARD_TYPE getCardType;
     private SoundManager soundManager;
 
-    
-
     private void Start()
     {
         gridLayout = GetComponent<GridLayoutGroup>();
@@ -185,12 +183,12 @@ public class CardTable : MonoBehaviour
 
                 if (card1.cardType == card2.cardType && card1 != card2) //can't compare with self.
                 {
-                    StartCoroutine(RemoveMatchedCards(card1.gameObject, card2.gameObject));
+                    RemoveMatchedCards(card1.gameObject, card2.gameObject);
                 }
-                if (card1.cardType != card2.cardType)
+                else if (card1.cardType != card2.cardType)
                 {
                     
-                    StartCoroutine(ResetFlipCards(card1.gameObject, card2.gameObject));
+                    ResetFlipCards(card1.gameObject, card2.gameObject);
                 }
             }
         }
@@ -205,9 +203,8 @@ public class CardTable : MonoBehaviour
             currentCard.GetComponent<CardManager>().UpdateCard();
         }
     }
-    IEnumerator ResetFlipCards(GameObject card1, GameObject card2)
+    private void ResetFlipCards(GameObject card1, GameObject card2)
     {
-        yield return new WaitForSeconds(1f);
         card1.GetComponent<CardFlip>().isFlipped = false;
         card2.GetComponent<CardFlip>().isFlipped = false;
         UpdateCardStateList();
@@ -216,13 +213,11 @@ public class CardTable : MonoBehaviour
         GameManager.totalCardFlips++;
         GameManager.incorrectSelections++;
     }
-    IEnumerator RemoveMatchedCards(GameObject card1, GameObject card2)
+    private void RemoveMatchedCards(GameObject card1, GameObject card2)
     {
         //CLEANUP CARD TABLE
         card1.GetComponent<Image>().raycastTarget = false;//disable interaction
         card2.GetComponent<Image>().raycastTarget = false;
-
-        yield return new WaitForSeconds(1f);
 
         card1.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
         card2.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;

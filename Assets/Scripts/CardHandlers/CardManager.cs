@@ -6,14 +6,15 @@ using UnityEngine.UI;
 public class CardManager : MonoBehaviour //important: this script should be above the CardFlip script in the game obj.
 {
     public CARD_TYPE cardType;
-    
 
+    private CardFlip card;
     [SerializeField] private List<Sprite> sprites = new List<Sprite>(); //sprites I want to attach to the card.
     private Sprite currentSprite;
 
     private void Start()
     {
         UpdateCard();
+
     }
     private void Update()
     {
@@ -46,6 +47,7 @@ public class CardManager : MonoBehaviour //important: this script should be abov
             default:
                 break;
         }
+        //card.HandleCardImage();
         gameObject.GetComponent<CardFlip>().ChangeCardFront(currentSprite);
     }
     public enum CARD_TYPE

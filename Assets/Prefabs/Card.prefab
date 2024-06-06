@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5440926120105727886}
   - component: {fileID: 5440926120105727881}
   - component: {fileID: 7487656640651990546}
+  - component: {fileID: 1881300562838428911}
   m_Layer: 5
   m_Name: Card
   m_TagString: Untagged
@@ -92,7 +93,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardType: 0
-  isFlipped: 0
   sprites:
   - {fileID: 21300000, guid: 15669b7c9e4875e47870e35563cc6e52, type: 3}
   - {fileID: 21300000, guid: 55baeb982af61ea4fa14c309a82cee7a, type: 3}
@@ -113,6 +113,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardFront: {fileID: 21300000, guid: 08f2686253c781f40bd5de5057919411, type: 3}
   cardBack: {fileID: 21300000, guid: c0082eeeba201d148975d3dfc956996d, type: 3}
+  canBeFlipped: 0
+  isFlipped: 0
 --- !u!114 &7487656640651990546
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,3 +144,23 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!95 &1881300562838428911
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5440926120105727890}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6737959a7f80ff34b93ee3b2021ece8f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
