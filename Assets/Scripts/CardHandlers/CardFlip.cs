@@ -45,7 +45,6 @@ public class CardFlip : MonoBehaviour
             cardManager.isFlipped = true;
         }
         cardTable.HandleMatching();
-        gameManager.totalCardFlips++;
     }
     public void ChangeCardFront(Sprite sprite)
     {
