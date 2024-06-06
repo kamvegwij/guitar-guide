@@ -8,8 +8,8 @@ public class GameManager
 {
     public static int totalCardFlips = 0;//variables to be shared across scripts
     public static int totalScore = 0;
-    public static int gameMode = 0;
+    public static int gameMode = 2;
     public static int incorrectSelections = 0;
 
-    
+    public static List<GameObject> cardDeck;
 }

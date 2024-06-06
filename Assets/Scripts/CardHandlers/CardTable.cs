@@ -10,27 +10,32 @@ public class CardTable : MonoBehaviour
     public GameObject cardPrefab;
     public GameObject completeScreen;
     public Transform table; //current table with grid layout
+    public GridLayoutGroup gridLayout;
+
+    public Vector2 cellSizes = new Vector2();
 
     public List<GameObject> itemsToHide; //hide these items when calling the game complete screen. manually add these
-    public List<GameObject> spawnedCards;
+    public List<GameObject> spawnedCards; //store cards in this inventory system.
     public List<GameObject> flippedCards;
     public List<GameObject> unflippedCards;
+    public List<CardManager.CARD_TYPE> availableCardTypes;
 
     public int currentTotalFlipped = 0;
     public int cardsSpawnTotal = 0; //use this to scale
-
-    public List<CardManager.CARD_TYPE> availableCardTypes;
+    private int maxIndex;
 
     private CardManager.CARD_TYPE getCardType;
     private SoundManager soundManager;
 
-    private int maxIndex;
+    
 
     private void Start()
     {
-        completeScreen.SetActive(false);
+        gridLayout = GetComponent<GridLayoutGroup>();
+        cellSizes = gridLayout.cellSize;
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
-
+        
+        completeScreen.SetActive(false);
         availableCardTypes = new List<CardManager.CARD_TYPE>() { CardManager.CARD_TYPE.SUN , CardManager.CARD_TYPE.LION, CardManager.CARD_TYPE.CROC, CardManager.CARD_TYPE.TURTLE };
         maxIndex = availableCardTypes.Count;
         LayoutFromDifficulty();
@@ -52,6 +57,11 @@ public class CardTable : MonoBehaviour
             }
         }
     }
+
+    private void ToggleCellDimensions(int x, int y)
+    {
+        gridLayout.cellSize = new Vector2(x, y);
+    }
     private void OnGameComplete()
     {
         SceneManager.LoadScene(0);
@@ -59,20 +69,23 @@ public class CardTable : MonoBehaviour
     
     private void LayoutFromDifficulty()
     {
+        int x = 250;
+        int y = 300;
+
         //this method changes the layout of the grid based on number of cards produced.
         switch(GameManager.gameMode)
         {
             //cardsSpawnTotal = a * b
             case 0:
-                Debug.Log("Easy Mode");
+                ToggleCellDimensions(x,y);
                 DrawCards(2, 2);
                 break;
             case 1:
-                Debug.Log("Medium Mode");
+                ToggleCellDimensions(x-50, y-50);
                 DrawCards(2, 3);
                 break;
             case 2:
-                Debug.Log("Difficult Mode");
+                ToggleCellDimensions(x-100, y-100);
                 DrawCards(4, 4);
                 break;
             default:
@@ -84,15 +97,9 @@ public class CardTable : MonoBehaviour
     private void DrawCards(int row, int col)
     {
         cardsSpawnTotal = row * col; //how many cards to draw. n = a*b, we can get duplicate cards spawned from this value.
-
         int counter = 1;
         int cardTypeIndex = 0;
         int total = availableCardTypes.Count; // int = 4
-
-        /*
-         * if cardsSpawnTotal == 4
-         *      then if cardIndex > 
-         */
         RandomCardOrder();
 
         for (int k = 0; k < row; k++)
@@ -110,10 +117,10 @@ public class CardTable : MonoBehaviour
                 spawnCard.transform.SetParent(table, false);
                 spawnCard.GetComponent<CardManager>().cardType = availableCardTypes[cardTypeIndex]; //randomly spawn a card type.
                 spawnedCards.Add(spawnCard);
-
+                counter++;
                 cardTypeIndex++;
             }
-            counter++;
+            
         }
     }
     private void RandomCardOrder()
@@ -137,7 +144,7 @@ public class CardTable : MonoBehaviour
         unflippedCards.Clear();
         for (int i = 0; i < spawnedCards.Count; i++)
         {
-            CardManager currentCard = spawnedCards[i].GetComponent<CardManager>();
+            CardFlip currentCard = spawnedCards[i].GetComponent<CardFlip>();
             if (currentCard.isFlipped)
             {
                 flippedCards.Add(currentCard.gameObject);
@@ -189,12 +196,22 @@ public class CardTable : MonoBehaviour
         }
         
     }
+    private void RefreshCardTable()
+    {
+        //
+        for (int i = 0; i < spawnedCards.Count; i++)
+        {
+            CardManager currentCard = spawnedCards[i].GetComponent<CardManager>();
+            currentCard.GetComponent<CardManager>().UpdateCard();
+        }
+    }
     IEnumerator ResetFlipCards(GameObject card1, GameObject card2)
     {
         yield return new WaitForSeconds(1f);
-        card1.GetComponent<CardManager>().isFlipped = false;
-        card2.GetComponent<CardManager>().isFlipped = false;
+        card1.GetComponent<CardFlip>().isFlipped = false;
+        card2.GetComponent<CardFlip>().isFlipped = false;
         UpdateCardStateList();
+        RefreshCardTable();
         soundManager.PlayIncorrectSound();
         GameManager.totalCardFlips++;
         GameManager.incorrectSelections++;
@@ -206,9 +223,10 @@ public class CardTable : MonoBehaviour
         card2.GetComponent<Image>().raycastTarget = false;
 
         yield return new WaitForSeconds(1f);
-        
-        Destroy(card1.gameObject);
-        Destroy(card2.gameObject);
+
+        card1.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
+        card2.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
+        RefreshCardTable();
         spawnedCards.Remove(card1);
         spawnedCards.Remove(card2);
         UpdateCardStateList();
