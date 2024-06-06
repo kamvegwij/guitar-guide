@@ -3,15 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager : MonoBehaviour
+[System.Serializable]
+public class GameManager
 {
-    public int totalCardFlips = 0;
-    public int totalScore = 0;
-    public int gameMode = 0;
-    public int incorrectSelections = 0;
+    public static int totalCardFlips = 0;//variables to be shared across scripts
+    public static int totalScore = 0;
+    public static int gameMode = 0;
+    public static int incorrectSelections = 0;
 
-    private void Start()
-    {
-        DontDestroyOnLoad(this);
-    }
+    
 }
