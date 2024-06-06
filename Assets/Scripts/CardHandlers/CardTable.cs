@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class CardTable : MonoBehaviour
 {
-    public CardManager playCard;
     public GameObject cardPrefab;
     public GameObject completeScreen;
     public Transform table; //current table with grid layout
@@ -18,15 +18,16 @@ public class CardTable : MonoBehaviour
 
     public int currentTotalFlipped = 0;
 
-    private List<CardManager.CARD_TYPE> availableCardTypes;
+    public List<CardManager.CARD_TYPE> availableCardTypes;
 
     private CardManager.CARD_TYPE getCardType;
-    private GameManager gameManager;
+    private SoundManager soundManager;
 
     private void Start()
     {
         completeScreen.SetActive(false);
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
+
         availableCardTypes = new List<CardManager.CARD_TYPE>() { CardManager.CARD_TYPE.SUN , CardManager.CARD_TYPE.LION, CardManager.CARD_TYPE.CROC, CardManager.CARD_TYPE.TURTLE };
         LayoutFromDifficulty();
         //UpdateCardStateList();
@@ -42,6 +43,7 @@ public class CardTable : MonoBehaviour
                 {
                     itemsToHide[i].gameObject.SetActive(false);
                 }
+                soundManager.PlayGameOverSound();
                 Invoke("OnGameComplete", 5f);
             }
         }
@@ -54,7 +56,7 @@ public class CardTable : MonoBehaviour
     private void LayoutFromDifficulty()
     {
         //this method changes the layout of the grid based on number of cards produced.
-        switch(gameManager.gameMode)
+        switch(GameManager.gameMode)
         {
             case 0:
                 Debug.Log("Easy Mode");
@@ -62,11 +64,11 @@ public class CardTable : MonoBehaviour
                 break;
             case 1:
                 Debug.Log("Medium Mode");
-                DrawCards(2, 3);
+                DrawCards(4, 4);
                 break;
             case 2:
                 Debug.Log("Difficult Mode");
-                DrawCards(5, 6);
+                DrawCards(6, 6);
                 break;
             default:
                 break;
@@ -77,28 +79,49 @@ public class CardTable : MonoBehaviour
     private void DrawCards(int row, int col)
     {
         int counter = 1;
-        for (int i = 0; i < row; i++)
+        int cardTypeIndex = 0;
+        int cardTypeLen = availableCardTypes.Count; // int = 4
+        RandomCardOrder();
+        for (int k = 0; k < row; k++)
         {
-            for (int k = 0; k < col; k++)
+            //int randomCardType = Random.Range(0, availableCardTypes.Count);
+
+            for (int j = 0; j < col; j++)
             {
+                if (cardTypeIndex >= cardTypeLen) //duplicates
+                {
+                    cardTypeIndex = 0;
+                }
+
                 GameObject spawnCard = Instantiate(cardPrefab, table.position, Quaternion.identity);
                 spawnCard.name = cardPrefab.name + counter; //every spawned card must be unique 
                 spawnCard.transform.SetParent(table, false);
-
-                int randomCardType = Random.Range(0, availableCardTypes.Count);
-                
-                spawnCard.GetComponent<CardManager>().cardType = availableCardTypes[randomCardType]; //randomly spawn a card type.
-
+                spawnCard.GetComponent<CardManager>().cardType = availableCardTypes[cardTypeIndex]; //randomly spawn a card type.
                 spawnedCards.Add(spawnCard);
-
-                counter++;
+                cardTypeIndex++;
+               
             }
+            
+            counter++;
         }
         
     }
+    private void RandomCardOrder()
+    {
+        int count = availableCardTypes.Count;
+        //int index = 0;
+
+        for (int k = 0; k < availableCardTypes.Count; k++)
+        {
+            int randomIndex = Random.Range(k, count);
+            CardManager.CARD_TYPE stemp = availableCardTypes[k];
+
+            availableCardTypes[k] = availableCardTypes[randomIndex];
+            availableCardTypes[randomIndex] = stemp;
+        }
+    }
     private void UpdateCardStateList()
     {
-        //spawnedCards.Clear();//clean up before re drawing
         flippedCards.Clear();
         unflippedCards.Clear();
         for (int i = 0; i < spawnedCards.Count; i++)
@@ -128,11 +151,11 @@ public class CardTable : MonoBehaviour
         UpdateCardStateList();
         CheckMatch();
         currentTotalFlipped = flippedCards.Count;
-
     }
 
     private void CheckMatch()
     {
+        Debug.Log("Hello");
         //if (flippedCards.Count < 2) return; //only start check when 2 or more cards are flipped
 
         for (int i = 0; i < flippedCards.Count; i++) //O(n)^2
@@ -144,14 +167,12 @@ public class CardTable : MonoBehaviour
 
                 if (card1.cardType == card2.cardType && card1 != card2) //can't compare with self.
                 {
-                    
                     StartCoroutine(RemoveMatchedCards(card1.gameObject, card2.gameObject));
                 }
                 if (card1.cardType != card2.cardType)
                 {
                     
                     StartCoroutine(ResetCards(card1.gameObject, card2.gameObject));
-                    
                 }
             }
         }
@@ -162,9 +183,10 @@ public class CardTable : MonoBehaviour
         yield return new WaitForSeconds(1f);
         card1.GetComponent<CardManager>().isFlipped = false;
         card2.GetComponent<CardManager>().isFlipped = false;
-        gameManager.totalCardFlips++;
-        gameManager.incorrectSelections++;
         UpdateCardStateList();
+        soundManager.PlayIncorrectSound();
+        GameManager.totalCardFlips++;
+        GameManager.incorrectSelections++;
     }
     IEnumerator RemoveMatchedCards(GameObject card1, GameObject card2)
     {
@@ -179,6 +201,7 @@ public class CardTable : MonoBehaviour
         spawnedCards.Remove(card1);
         spawnedCards.Remove(card2);
         UpdateCardStateList();
-        gameManager.totalScore++; //increase score
+        soundManager.PlayMatchSound();
+        GameManager.totalScore++; //increase score
     }
 }

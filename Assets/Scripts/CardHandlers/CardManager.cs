@@ -10,7 +10,6 @@ public class CardManager : MonoBehaviour //important: this script should be abov
 
     [SerializeField] private List<Sprite> sprites = new List<Sprite>(); //sprites I want to attach to the card.
     private Sprite currentSprite;
-    private GameManager gameManager;
 
     private void Start()
     {

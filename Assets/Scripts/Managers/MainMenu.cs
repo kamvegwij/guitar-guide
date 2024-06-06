@@ -8,14 +8,10 @@ public class MainMenu : MonoBehaviour
 {
     public Button playBtn;
     public Button quitBtn;
-
     public Slider difficultySlider;
-
-    private GameManager gameManager;
 
     private void Start()
     {
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         playBtn.onClick.AddListener(StartGame);
         quitBtn.onClick.AddListener(QuitGame);
 
@@ -25,7 +21,7 @@ public class MainMenu : MonoBehaviour
 
     private void ToggleDifficulty()
     {
-        gameManager.gameMode = (int)difficultySlider.value;
+        GameManager.gameMode = (int)difficultySlider.value;
 
     }
     public void ChangeScene()

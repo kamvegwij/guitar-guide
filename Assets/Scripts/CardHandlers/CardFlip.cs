@@ -14,13 +14,12 @@ public class CardFlip : MonoBehaviour
     private CardTable cardTable;
     private Image cardImage; //the object component holding sprites.
     private CardManager cardManager;
-    private GameManager gameManager;
-
+    private SoundManager soundManager;
 
     private void Start()
     {
-        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         cardTable = GameObject.Find("CardTable").GetComponent<CardTable>();
+        soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
 
         cardManager = GetComponent<CardManager>();
         cardImage = GetComponent<Image>();
@@ -47,7 +46,7 @@ public class CardFlip : MonoBehaviour
     public void FlipCard()
     {
         if (cardImage == null) return; //if component doesn't exist.
-
+        soundManager.PlayFlipSound();
         cardManager.isFlipped = !cardManager.isFlipped;
         cardTable.HandleMatching();
     }
