@@ -24,12 +24,15 @@ public class CardTable : MonoBehaviour
     private CardManager.CARD_TYPE getCardType;
     private SoundManager soundManager;
 
+    private int maxIndex;
+
     private void Start()
     {
         completeScreen.SetActive(false);
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
 
         availableCardTypes = new List<CardManager.CARD_TYPE>() { CardManager.CARD_TYPE.SUN , CardManager.CARD_TYPE.LION, CardManager.CARD_TYPE.CROC, CardManager.CARD_TYPE.TURTLE };
+        maxIndex = availableCardTypes.Count;
         LayoutFromDifficulty();
         //UpdateCardStateList();
     }
@@ -70,7 +73,7 @@ public class CardTable : MonoBehaviour
                 break;
             case 2:
                 Debug.Log("Difficult Mode");
-                DrawCards(4, 6);
+                DrawCards(4, 4);
                 break;
             default:
                 break;
@@ -91,19 +94,23 @@ public class CardTable : MonoBehaviour
          *      then if cardIndex > 
          */
         RandomCardOrder();
+
         for (int k = 0; k < row; k++)
         {
             for (int j = 0; j < col; j++)
             {
-                if (cardTypeIndex >= cardsSpawnTotal / 2) //duplicates
+                if (cardTypeIndex >= cardsSpawnTotal / 2 || cardTypeIndex >= total)
                 {
-                    cardTypeIndex = 0;
+                    cardTypeIndex = 0; //spawn the set of cards again to have duplicates
+                    
                 }
                 GameObject spawnCard = Instantiate(cardPrefab, table.position, Quaternion.identity);
+
                 spawnCard.name = cardPrefab.name + counter; //every spawned card must be unique 
                 spawnCard.transform.SetParent(table, false);
                 spawnCard.GetComponent<CardManager>().cardType = availableCardTypes[cardTypeIndex]; //randomly spawn a card type.
                 spawnedCards.Add(spawnCard);
+
                 cardTypeIndex++;
             }
             counter++;
@@ -176,13 +183,13 @@ public class CardTable : MonoBehaviour
                 if (card1.cardType != card2.cardType)
                 {
                     
-                    StartCoroutine(ResetCards(card1.gameObject, card2.gameObject));
+                    StartCoroutine(ResetFlipCards(card1.gameObject, card2.gameObject));
                 }
             }
         }
         
     }
-    IEnumerator ResetCards(GameObject card1, GameObject card2)
+    IEnumerator ResetFlipCards(GameObject card1, GameObject card2)
     {
         yield return new WaitForSeconds(1f);
         card1.GetComponent<CardManager>().isFlipped = false;

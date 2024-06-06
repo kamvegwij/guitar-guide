@@ -17,7 +17,6 @@ public class CardManager : MonoBehaviour //important: this script should be abov
         gameObject.GetComponent<CardFlip>().ChangeCardFront(currentSprite);
     }
 
-    
     public void CreateCard()
     {
         switch(cardType) 
