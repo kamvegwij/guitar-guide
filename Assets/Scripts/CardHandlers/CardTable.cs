@@ -14,13 +14,20 @@ public class CardTable : MonoBehaviour
     public List<GameObject> flippedCards;
     public List<GameObject> unflippedCards;
 
-    private int currentTotalFlipped = 0;
+    public int currentTotalFlipped = 0;
+
+    private List<CardManager.CARD_TYPE> availableCardTypes;
+    private CardManager.CARD_TYPE getCardType;
 
     private GameManager gameManager;
 
     private void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+       // getCardType = GetComponent<CardManager.CARD_TYPE>();
+
+        availableCardTypes = new List<CardManager.CARD_TYPE>() { CardManager.CARD_TYPE.SUN , CardManager.CARD_TYPE.LION, CardManager.CARD_TYPE.CROC, CardManager.CARD_TYPE.TURTLE };
+        
         LayoutFromDifficulty();
     }
 
@@ -56,6 +63,10 @@ public class CardTable : MonoBehaviour
                 spawnCard.name = cardPrefab.name + counter; //every spawned card must be unique 
                 spawnCard.transform.SetParent(table, false);
 
+                int randomCardType = Random.Range(0, availableCardTypes.Count);
+                
+                spawnCard.GetComponent<CardManager>().cardType = availableCardTypes[randomCardType]; //randomly spawn a card type.
+
                 spawnedCards.Add(spawnCard);
 
                 counter++;
@@ -84,9 +95,24 @@ public class CardTable : MonoBehaviour
             }
         }
         currentTotalFlipped = flippedCards.Count;
+        CheckMatch();
     }
-    private void ResetCards()
+    private void CheckMatch()
     {
-        //
+        for (int i = 0; i < flippedCards.Count; i++) //O(n)^2
+        {
+            for (int x = 1; x < flippedCards.Count; x++)
+            {
+                CardManager currentCard = flippedCards[i].GetComponent<CardManager>();
+                CardManager compareCard = flippedCards[x].GetComponent<CardManager>();  
+
+                if (currentCard.cardType == compareCard.cardType && currentCard != compareCard) //can't compare with self.
+                {
+                    gameManager.totalScore++;
+                    //Destroy(compareCard.gameObject);
+                    Debug.Log(currentCard.gameObject.name + " compared to " + compareCard.gameObject.name);
+                }
+            }
+        }
     }
 }

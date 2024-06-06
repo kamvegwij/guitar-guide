@@ -22,7 +22,12 @@ public class CardFlip : MonoBehaviour
 
         cardManager = GetComponent<CardManager>();
         cardImage = GetComponent<Image>();
-        ResetCard();
+
+        cardImage.sprite = cardFront; //default state when starting
+        cardImage.raycastTarget = false; //disable interaction when showing the cards in start.
+        cardManager.isFlipped = false;
+
+        Invoke("ShowCardStart", 2.0f);
     }
     public void FlipCard()
     {
@@ -46,10 +51,10 @@ public class CardFlip : MonoBehaviour
     {
         cardFront = sprite;
     }
-    private void ResetCard()
+    private void ShowCardStart()
     {
         //called when placing new cards.
-        cardImage.sprite = cardBack; //default state
-        cardManager.isFlipped = false;
+        cardImage.sprite = cardBack;
+        cardImage.raycastTarget = true;
     }
 }
