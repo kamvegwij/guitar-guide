@@ -29,7 +29,7 @@ public class CardTable : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         availableCardTypes = new List<CardManager.CARD_TYPE>() { CardManager.CARD_TYPE.SUN , CardManager.CARD_TYPE.LION, CardManager.CARD_TYPE.CROC, CardManager.CARD_TYPE.TURTLE };
         LayoutFromDifficulty();
-        UpdateCardStateList();
+        //UpdateCardStateList();
     }
     private void Update()
     {
@@ -53,6 +53,7 @@ public class CardTable : MonoBehaviour
     
     private void LayoutFromDifficulty()
     {
+        //this method changes the layout of the grid based on number of cards produced.
         switch(gameManager.gameMode)
         {
             case 0:
@@ -70,24 +71,9 @@ public class CardTable : MonoBehaviour
             default:
                 break;
         }
-        
+        UpdateCardStateList();
     }
-    private void UpdateCardStateList()
-    {
-
-        for (int i = 0; i < spawnedCards.Count; i++) 
-        { 
-            GameObject card = spawnedCards[i];
-            if (card.GetComponent<CardManager>().isFlipped)
-            {
-                flippedCards.Add(card);
-            }
-            else
-            {
-                unflippedCards.Add(card);
-            }
-        }
-    }
+  
     private void DrawCards(int row, int col)
     {
         int counter = 1;
@@ -110,24 +96,11 @@ public class CardTable : MonoBehaviour
         }
         
     }
-
-    public void ShuffleDrawCards()
+    private void UpdateCardStateList()
     {
-        for (int i = 0; i < spawnedCards.Count; i++)
-        {
-            Destroy(spawnedCards[i].gameObject);
-        }
-        spawnedCards.Clear();//clean up before re drawing
+        //spawnedCards.Clear();//clean up before re drawing
         flippedCards.Clear();
         unflippedCards.Clear();
-        LayoutFromDifficulty();
-    }
-    public void HandleMatching()
-    {
-        flippedCards.Clear(); //cleanup before check.
-        unflippedCards.Clear();
-
-        //keep track of cards on the table.
         for (int i = 0; i < spawnedCards.Count; i++)
         {
             CardManager currentCard = spawnedCards[i].GetComponent<CardManager>();
@@ -140,15 +113,28 @@ public class CardTable : MonoBehaviour
                 unflippedCards.Add(currentCard.gameObject);
             }
         }
-        currentTotalFlipped = flippedCards.Count;
+    }
+    public void ShuffleDrawCards()
+    {
+        for (int i = 0; i < spawnedCards.Count; i++)
+        {
+            Destroy(spawnedCards[i].gameObject);
+        }
+        spawnedCards.Clear();
+        LayoutFromDifficulty();
+    }
+    public void HandleMatching()
+    {
+        UpdateCardStateList();
         CheckMatch();
+        currentTotalFlipped = flippedCards.Count;
+
     }
 
     private void CheckMatch()
     {
         //if (flippedCards.Count < 2) return; //only start check when 2 or more cards are flipped
 
-        Debug.Log("Can Start Check");
         for (int i = 0; i < flippedCards.Count; i++) //O(n)^2
         {
             for (int x = 0; x < flippedCards.Count; x++)
@@ -158,15 +144,14 @@ public class CardTable : MonoBehaviour
 
                 if (card1.cardType == card2.cardType && card1 != card2) //can't compare with self.
                 {
-
+                    
                     StartCoroutine(RemoveMatchedCards(card1.gameObject, card2.gameObject));
                 }
                 if (card1.cardType != card2.cardType)
                 {
                     
                     StartCoroutine(ResetCards(card1.gameObject, card2.gameObject));
-                    Debug.Log("Incorrect");
-                    gameManager.totalCardFlips++;
+                    
                 }
             }
         }
@@ -177,15 +162,15 @@ public class CardTable : MonoBehaviour
         yield return new WaitForSeconds(1f);
         card1.GetComponent<CardManager>().isFlipped = false;
         card2.GetComponent<CardManager>().isFlipped = false;
-
+        gameManager.totalCardFlips++;
+        gameManager.incorrectSelections++;
+        UpdateCardStateList();
     }
     IEnumerator RemoveMatchedCards(GameObject card1, GameObject card2)
     {
         //CLEANUP CARD TABLE
         card1.GetComponent<Image>().raycastTarget = false;//disable interaction
         card2.GetComponent<Image>().raycastTarget = false;
-        gameManager.totalScore++; //increase score
-        
 
         yield return new WaitForSeconds(1f);
         
@@ -193,8 +178,7 @@ public class CardTable : MonoBehaviour
         Destroy(card2.gameObject);
         spawnedCards.Remove(card1);
         spawnedCards.Remove(card2);
-        flippedCards.Remove(card1);
-        flippedCards.Remove(card2);
-        
+        UpdateCardStateList();
+        gameManager.totalScore++; //increase score
     }
 }

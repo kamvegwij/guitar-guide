@@ -9,6 +9,8 @@ public class CardFlip : MonoBehaviour
     [SerializeField] private Sprite cardFront;
     [SerializeField] private Sprite cardBack;
 
+    private bool gameStarted = false;
+
     private CardTable cardTable;
     private Image cardImage; //the object component holding sprites.
     private CardManager cardManager;
@@ -32,6 +34,7 @@ public class CardFlip : MonoBehaviour
     private void Update()
     {
         //TODO: optimise this code block.
+        if (!gameStarted) return;
         if (!cardManager.isFlipped)
         {
             cardImage.sprite = cardBack;
@@ -57,5 +60,6 @@ public class CardFlip : MonoBehaviour
         //called when placing new cards.
         cardImage.sprite = cardBack;
         cardImage.raycastTarget = true;
+        gameStarted = true;
     }
 }
