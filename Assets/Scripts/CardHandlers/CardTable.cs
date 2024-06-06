@@ -143,55 +143,58 @@ public class CardTable : MonoBehaviour
         currentTotalFlipped = flippedCards.Count;
         CheckMatch();
     }
-    private void NoMatch(CardFlip card1, CardFlip card2)
-    {
-        card1.FlipCard();
-        card2.FlipCard();
-        UpdateCardStateList();
-    }
+
     private void CheckMatch()
     {
-        if (flippedCards.Count < 2) return; //only start check when 2 or more cards are flipped
+        //if (flippedCards.Count < 2) return; //only start check when 2 or more cards are flipped
 
         Debug.Log("Can Start Check");
         for (int i = 0; i < flippedCards.Count; i++) //O(n)^2
         {
             for (int x = 0; x < flippedCards.Count; x++)
             {
-                CardManager currentCard = flippedCards[i].GetComponent<CardManager>();
-                CardManager compareCard = flippedCards[x].GetComponent<CardManager>();  
+                CardManager card1 = flippedCards[i].GetComponent<CardManager>();
+                CardManager card2 = flippedCards[x].GetComponent<CardManager>();  
 
-                if (currentCard.cardType == compareCard.cardType && currentCard != compareCard) //can't compare with self.
+                if (card1.cardType == card2.cardType && card1 != card2) //can't compare with self.
                 {
 
-                    StartCoroutine(RemoveMatchedCards(currentCard.gameObject, compareCard.gameObject));
+                    StartCoroutine(RemoveMatchedCards(card1.gameObject, card2.gameObject));
                 }
-                else
+                if (card1.cardType != card2.cardType)
                 {
-                    //CardFlip card1 = currentCard.gameObject.GetComponent<CardFlip>();
-                    //CardFlip card2 = currentCard.gameObject.GetComponent<CardFlip>();
-                    //NoMatch(card1, card2);
+                    
+                    StartCoroutine(ResetCards(card1.gameObject, card2.gameObject));
                     Debug.Log("Incorrect");
-
+                    gameManager.totalCardFlips++;
                 }
             }
         }
-        gameManager.totalCardFlips++;
+        
+    }
+    IEnumerator ResetCards(GameObject card1, GameObject card2)
+    {
+        yield return new WaitForSeconds(1f);
+        card1.GetComponent<CardManager>().isFlipped = false;
+        card2.GetComponent<CardManager>().isFlipped = false;
+
     }
     IEnumerator RemoveMatchedCards(GameObject card1, GameObject card2)
     {
         //CLEANUP CARD TABLE
         card1.GetComponent<Image>().raycastTarget = false;//disable interaction
         card2.GetComponent<Image>().raycastTarget = false;
+        gameManager.totalScore++; //increase score
+        
 
         yield return new WaitForSeconds(1f);
-
-        gameManager.totalScore++; //increase score
+        
         Destroy(card1.gameObject);
         Destroy(card2.gameObject);
         spawnedCards.Remove(card1);
         spawnedCards.Remove(card2);
         flippedCards.Remove(card1);
         flippedCards.Remove(card2);
+        
     }
 }

@@ -29,21 +29,23 @@ public class CardFlip : MonoBehaviour
 
         Invoke("ShowCardStart", 2.0f);
     }
+    private void Update()
+    {
+        //TODO: optimise this code block.
+        if (!cardManager.isFlipped)
+        {
+            cardImage.sprite = cardBack;
+        }
+        else
+        {
+            cardImage.sprite = cardFront;
+        }
+    }
     public void FlipCard()
     {
         if (cardImage == null) return; //if component doesn't exist.
 
-        if (cardManager.isFlipped)
-        {
-            cardImage.sprite = cardBack;
-            cardManager.isFlipped = false;
-        }
-        else
-        {
-            //Debug.Log(GetComponent<CardManager>().cardType); //for testing
-            cardImage.sprite = cardFront;
-            cardManager.isFlipped = true;
-        }
+        cardManager.isFlipped = !cardManager.isFlipped;
         cardTable.HandleMatching();
     }
     public void ChangeCardFront(Sprite sprite)
