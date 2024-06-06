@@ -9,6 +9,8 @@ public class CardFlip : MonoBehaviour
     [SerializeField] private Sprite cardFront;
     [SerializeField] private Sprite cardBack;
 
+    private bool gameStarted = false;
+
     private CardTable cardTable;
     private Image cardImage; //the object component holding sprites.
     private CardManager cardManager;
@@ -29,21 +31,24 @@ public class CardFlip : MonoBehaviour
 
         Invoke("ShowCardStart", 2.0f);
     }
+    private void Update()
+    {
+        //TODO: optimise this code block.
+        if (!gameStarted) return;
+        if (!cardManager.isFlipped)
+        {
+            cardImage.sprite = cardBack;
+        }
+        else
+        {
+            cardImage.sprite = cardFront;
+        }
+    }
     public void FlipCard()
     {
         if (cardImage == null) return; //if component doesn't exist.
 
-        if (cardManager.isFlipped)
-        {
-            cardImage.sprite = cardBack;
-            cardManager.isFlipped = false;
-        }
-        else
-        {
-            //Debug.Log(GetComponent<CardManager>().cardType); //for testing
-            cardImage.sprite = cardFront;
-            cardManager.isFlipped = true;
-        }
+        cardManager.isFlipped = !cardManager.isFlipped;
         cardTable.HandleMatching();
     }
     public void ChangeCardFront(Sprite sprite)
@@ -55,5 +60,6 @@ public class CardFlip : MonoBehaviour
         //called when placing new cards.
         cardImage.sprite = cardBack;
         cardImage.raycastTarget = true;
+        gameStarted = true;
     }
 }

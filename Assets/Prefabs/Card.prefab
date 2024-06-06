@@ -94,7 +94,7 @@ MonoBehaviour:
   cardType: 0
   isFlipped: 0
   sprites:
-  - {fileID: 21300000, guid: 1be092d29ba59a047879262d8742d8dc, type: 3}
+  - {fileID: 21300000, guid: 15669b7c9e4875e47870e35563cc6e52, type: 3}
   - {fileID: 21300000, guid: 55baeb982af61ea4fa14c309a82cee7a, type: 3}
   - {fileID: 21300000, guid: 422515d54018b27438f6080a3286cbb2, type: 3}
   - {fileID: 21300000, guid: 1be092d29ba59a047879262d8742d8dc, type: 3}
