@@ -20,7 +20,8 @@ public class MainMenu : MonoBehaviour
         quitBtn.onClick.AddListener(QuitGame);
         saveBtn.onClick.AddListener(SaveGame);
         difficultySlider.value = 0; //default
-        difficultySlider.onValueChanged.AddListener(val => ToggleDifficulty());
+        ToggleDifficulty(); //when menu reloads, get the difficulty.
+        difficultySlider.onValueChanged.AddListener(val => ToggleDifficulty());//when player changes 
     }
     private void SaveGame()
     {
