@@ -214,15 +214,13 @@ public class CardTable : MonoBehaviour
     }
     IEnumerator CardMatchFound(GameObject card1, GameObject card2)
     {
-        card1.GetComponent<CardAnimations>().PlayMatchedAnimation();
-        card2.GetComponent<CardAnimations>().PlayMatchedAnimation();
-        
         soundManager.PlayMatchSound();
 
         //CLEANUP CARD TABLE
         card1.GetComponent<Image>().raycastTarget = false;//disable interaction
         card2.GetComponent<Image>().raycastTarget = false;
-
+        card2.GetComponent<CardAnimations>().PlayMatchedAnimation();
+        card1.GetComponent<CardAnimations>().PlayMatchedAnimation();
         yield return new WaitForSeconds(1f);
 
         card1.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
