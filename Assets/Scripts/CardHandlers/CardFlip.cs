@@ -13,8 +13,8 @@ public class CardFlip : MonoBehaviour
     public bool isFlipped = false;
 
     private bool gameStarted = false;
-    
 
+    private Animator animator;
     private CardTable cardTable;
     private Image cardImage; //the object component holding sprites.
     private CardManager cardManager;
@@ -24,7 +24,7 @@ public class CardFlip : MonoBehaviour
     {
         cardTable = GameObject.Find("CardTable").GetComponent<CardTable>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
-
+        animator = GetComponent<Animator>();
         cardManager = GetComponent<CardManager>();
         cardImage = GetComponent<Image>();
 
@@ -64,6 +64,7 @@ public class CardFlip : MonoBehaviour
         soundManager.PlayFlipSound();
         isFlipped = !isFlipped;
         cardTable.HandleMatching();
+
     }
     public void ChangeCardFront(Sprite sprite)
     {
@@ -78,21 +79,11 @@ public class CardFlip : MonoBehaviour
         if (cardManager.cardType != CardManager.CARD_TYPE.BLANK)
         {
             canBeFlipped = true;
+            animator.Play("CardFlipAnim", 0, 0f);
         }
         else
         {
             canBeFlipped = false;
-        }
-    }
-    private void AnimateCard()
-    {
-        if (!isFlipped)
-        {
-            cardImage.sprite = cardBack;
-        }
-        else
-        {
-            cardImage.sprite = cardFront;
         }
     }
 }

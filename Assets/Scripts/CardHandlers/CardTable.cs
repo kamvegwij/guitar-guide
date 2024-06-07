@@ -201,31 +201,31 @@ public class CardTable : MonoBehaviour
     }
     IEnumerator NoCardMatchFound(GameObject card1, GameObject card2)
     {
-        
         soundManager.PlayIncorrectSound();
-
         yield return new WaitForSeconds(0.5f);
 
+        card1.GetComponent<CardAnimations>().PlayShakeAnimation();
+        card2.GetComponent<CardAnimations>().PlayShakeAnimation();
         card1.GetComponent<CardFlip>().isFlipped = false;
         card2.GetComponent<CardFlip>().isFlipped = false;
+
         UpdateCardStateList();
         RefreshCardTable();
 
     }
     IEnumerator CardMatchFound(GameObject card1, GameObject card2)
     {
-        
         soundManager.PlayMatchSound();
         //CLEANUP CARD TABLE
         card1.GetComponent<Image>().raycastTarget = false;//disable interaction
         card2.GetComponent<Image>().raycastTarget = false;
-
-        yield return new WaitForSecondsRealtime(1f);
+        
+        yield return new WaitForSeconds(1f);
+        card1.GetComponent<CardAnimations>().PlayMatchedAnimation();
+        card2.GetComponent<CardAnimations>().PlayMatchedAnimation();
         card1.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
         card2.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
-
         RefreshCardTable();
-
         spawnedCards.Remove(card1);
         spawnedCards.Remove(card2);
 

@@ -46,7 +46,6 @@ public class CardManager : MonoBehaviour //important: this script should be abov
             default:
                 break;
         }
-        //card.HandleCardImage();
         gameObject.GetComponent<CardFlip>().ChangeCardFront(currentSprite);
     }
     public enum CARD_TYPE
