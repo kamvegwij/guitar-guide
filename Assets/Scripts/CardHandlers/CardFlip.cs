@@ -20,13 +20,18 @@ public class CardFlip : MonoBehaviour
     private CardManager cardManager;
     private SoundManager soundManager;
 
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+        cardManager = GetComponent<CardManager>();
+        cardImage = GetComponent<Image>();
+    }
+
     private void Start()
     {
         cardTable = GameObject.Find("CardTable").GetComponent<CardTable>();
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
-        animator = GetComponent<Animator>();
-        cardManager = GetComponent<CardManager>();
-        cardImage = GetComponent<Image>();
+        
 
         cardImage.sprite = cardFront; //default state when starting
         cardImage.raycastTarget = false; //disable interaction when showing the cards in start.

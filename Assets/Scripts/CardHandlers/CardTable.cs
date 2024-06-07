@@ -28,8 +28,8 @@ public class CardTable : MonoBehaviour
 
     private void Start()
     {
-        gridLayout = GetComponent<GridLayoutGroup>();
-        cellSizes = gridLayout.cellSize;
+        //gridLayout = GetComponent<GridLayoutGroup>();
+        //cellSizes = gridLayout.cellSize;
         soundManager = GameObject.Find("SoundManager").GetComponent<SoundManager>();
         
         completeScreen.SetActive(false);
@@ -72,15 +72,15 @@ public class CardTable : MonoBehaviour
         {
             //cardsSpawnTotal = a * b
             case 0:
-                ToggleCellDimensions(x,y);
+                //ToggleCellDimensions(x,y);
                 DrawCards(2, 2);
                 break;
             case 1:
-                ToggleCellDimensions(x-50, y-50);
+                //ToggleCellDimensions(x-50, y-50);
                 DrawCards(2, 3);
                 break;
             case 2:
-                ToggleCellDimensions(x-100, y-100);
+                //ToggleCellDimensions(x-100, y-100);
                 DrawCards(4, 4);
                 break;
             default:
@@ -140,6 +140,7 @@ public class CardTable : MonoBehaviour
         for (int i = 0; i < spawnedCards.Count; i++)
         {
             CardFlip currentCard = spawnedCards[i].GetComponent<CardFlip>();
+            
             if (currentCard.isFlipped)
             {
                 FocusOnCard(currentCard.transform, new Vector2(1.1f, 1.1f));
@@ -152,15 +153,34 @@ public class CardTable : MonoBehaviour
             }
         }
     }
-    public void ShuffleDrawCards()
+    private void RefreshCardTable()
     {
         for (int i = 0; i < spawnedCards.Count; i++)
         {
-            Destroy(spawnedCards[i].gameObject);
+            CardManager currentCard = spawnedCards[i].GetComponent<CardManager>();
+            currentCard.GetComponent<CardManager>().UpdateCard();
         }
-        spawnedCards.Clear();
-        LayoutFromDifficulty();
-        RefreshCardTable();
+        GameManager.comboInfo = GameManager.comboStreak.ToString();
+    }
+    public void ShuffleDrawCards()
+    {
+        if (GameManager.points >= 10000)
+        {
+            for (int i = 0; i < spawnedCards.Count; i++)
+            {
+                Destroy(spawnedCards[i].gameObject);
+            }
+            spawnedCards.Clear();
+            LayoutFromDifficulty();
+            RefreshCardTable();
+
+            GameManager.points -= 1500;
+        }
+        else
+        {
+            Debug.Log("Cannot Shuffle");
+        }
+        
     }
     public void HandleMatching()
     {
@@ -190,27 +210,21 @@ public class CardTable : MonoBehaviour
         }
         
     }
-    private void RefreshCardTable()
-    {
-        for (int i = 0; i < spawnedCards.Count; i++)
-        {
-            CardManager currentCard = spawnedCards[i].GetComponent<CardManager>();
-            currentCard.GetComponent<CardManager>().UpdateCard();
-        }
-        GameManager.comboInfo = GameManager.comboStreak.ToString();
-    }
+
     IEnumerator NoCardMatchFound(GameObject card1, GameObject card2)
     {
         soundManager.PlayIncorrectSound();
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1f);
 
         card1.GetComponent<CardAnimations>().PlayShakeAnimation();
         card2.GetComponent<CardAnimations>().PlayShakeAnimation();
+
         card1.GetComponent<CardFlip>().isFlipped = false;
         card2.GetComponent<CardFlip>().isFlipped = false;
 
-        UpdateCardStateList();
+        
         RefreshCardTable();
+        UpdateCardStateList();
 
     }
     IEnumerator CardMatchFound(GameObject card1, GameObject card2)
@@ -223,14 +237,16 @@ public class CardTable : MonoBehaviour
         yield return new WaitForSeconds(1f);
         card1.GetComponent<CardAnimations>().PlayMatchedAnimation();
         card2.GetComponent<CardAnimations>().PlayMatchedAnimation();
+
         card1.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
         card2.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
+
+        //UpdateCardStateList();
         RefreshCardTable();
         spawnedCards.Remove(card1);
         spawnedCards.Remove(card2);
-
+        //RefreshCardTable();
         UpdateCardStateList();
-        
     }
     private void FocusOnCard(Transform cardSize, Vector2 size)
     {
