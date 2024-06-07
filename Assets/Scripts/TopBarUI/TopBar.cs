@@ -7,7 +7,9 @@ public class TopBar : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI matchesText;
     [SerializeField] private TextMeshProUGUI flipsText;
-
+    [SerializeField] private TextMeshProUGUI combosText;
+    [SerializeField] private TextMeshProUGUI combosInfo;
+    [SerializeField] private TextMeshProUGUI pointsText;
     private void Start()
     {
 
@@ -15,10 +17,10 @@ public class TopBar : MonoBehaviour
     }
     private void Update()
     {
-        if (matchesText != null && flipsText != null) 
-        {
-            matchesText.text = GameManager.totalScore.ToString();
-            flipsText.text = GameManager.totalCardFlips.ToString();
-        }
+        matchesText.text = GameManager.matches.ToString();
+        flipsText.text = GameManager.totalCardFlips.ToString();
+        combosText.text = GameManager.comboStreak.ToString();
+        combosInfo.text = GameManager.comboInfo;
+        pointsText.text = GameManager.points.ToString();
     }
 }

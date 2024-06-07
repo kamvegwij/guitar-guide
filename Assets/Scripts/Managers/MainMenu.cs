@@ -7,18 +7,23 @@ using UnityEngine.UI;
 public class MainMenu : MonoBehaviour
 {
     public Button playBtn;
+    public Button loadBtn;
     public Button quitBtn;
     public Slider difficultySlider;
 
     private void Start()
     {
         playBtn.onClick.AddListener(StartGame);
+        loadBtn.onClick.AddListener(LoadGame);
         quitBtn.onClick.AddListener(QuitGame);
 
         difficultySlider.value = 0; //default
         difficultySlider.onValueChanged.AddListener(val => ToggleDifficulty());
     }
-
+    private void LoadGame()
+    {
+        ChangeScene();
+    }
     private void ToggleDifficulty()
     {
         GameManager.gameMode = (int)difficultySlider.value;
@@ -43,6 +48,7 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame()
     {
+        GameManager.ResetStats();
         ChangeScene();
     }
 

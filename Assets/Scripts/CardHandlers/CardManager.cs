@@ -6,19 +6,21 @@ using UnityEngine.UI;
 public class CardManager : MonoBehaviour //important: this script should be above the CardFlip script in the game obj.
 {
     public CARD_TYPE cardType;
-    public bool isFlipped = false;
 
+    private CardFlip card;
     [SerializeField] private List<Sprite> sprites = new List<Sprite>(); //sprites I want to attach to the card.
     private Sprite currentSprite;
 
     private void Start()
     {
-        CreateCard();
-        gameObject.GetComponent<CardFlip>().ChangeCardFront(currentSprite);
-    }
+        UpdateCard();
 
-    
-    public void CreateCard()
+    }
+    private void Update()
+    {
+        
+    }
+    public void UpdateCard()
     {
         switch(cardType) 
         {
@@ -37,10 +39,16 @@ public class CardManager : MonoBehaviour //important: this script should be abov
             case CARD_TYPE.TURTLE:
                 currentSprite = sprites[3];
                 break;
+            case CARD_TYPE.BLANK:
+                currentSprite = sprites[4];
+                GetComponent<Image>().raycastTarget = false; //disable interaction
+                break;
 
             default:
                 break;
         }
+        //card.HandleCardImage();
+        gameObject.GetComponent<CardFlip>().ChangeCardFront(currentSprite);
     }
     public enum CARD_TYPE
     {

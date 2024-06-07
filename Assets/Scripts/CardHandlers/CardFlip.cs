@@ -8,8 +8,11 @@ public class CardFlip : MonoBehaviour
 {
     [SerializeField] private Sprite cardFront;
     [SerializeField] private Sprite cardBack;
+    public bool canBeFlipped = false;
+    public bool isFlipped = false;
 
     private bool gameStarted = false;
+    
 
     private CardTable cardTable;
     private Image cardImage; //the object component holding sprites.
@@ -26,28 +29,39 @@ public class CardFlip : MonoBehaviour
 
         cardImage.sprite = cardFront; //default state when starting
         cardImage.raycastTarget = false; //disable interaction when showing the cards in start.
-        cardManager.isFlipped = false;
+        isFlipped = false;
 
         Invoke("ShowCardStart", 2.0f);
     }
     private void Update()
     {
-        //TODO: optimise this code block.
+        HandleCardImage();
+    }
+    private void HandleCardImage()
+    {
         if (!gameStarted) return;
-        if (!cardManager.isFlipped)
+
+        if (!canBeFlipped)
         {
-            cardImage.sprite = cardBack;
+            cardImage.sprite = cardFront;
         }
         else
         {
-            cardImage.sprite = cardFront;
+            if (!isFlipped)
+            {
+                cardImage.sprite = cardBack;
+            }
+            else
+            {
+                cardImage.sprite = cardFront;
+            }
         }
     }
     public void FlipCard()
     {
         if (cardImage == null) return; //if component doesn't exist.
         soundManager.PlayFlipSound();
-        cardManager.isFlipped = !cardManager.isFlipped;
+        isFlipped = !isFlipped;
         cardTable.HandleMatching();
     }
     public void ChangeCardFront(Sprite sprite)
@@ -60,5 +74,13 @@ public class CardFlip : MonoBehaviour
         cardImage.sprite = cardBack;
         cardImage.raycastTarget = true;
         gameStarted = true;
+        if (cardManager.cardType != CardManager.CARD_TYPE.BLANK)
+        {
+            canBeFlipped = true;
+        }
+        else
+        {
+            canBeFlipped = false;
+        }
     }
 }

@@ -18,7 +18,8 @@ public class SoundManager : MonoBehaviour
 
     private void PlaySound(AudioClip clip)
     {
-        if (!audioSource.isPlaying && clip != null)
+        //!audioSource.isPlaying && 
+        if (clip != null)
         {
             audioSource.clip = clip;
             audioSource.Play();
