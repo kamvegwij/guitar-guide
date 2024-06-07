@@ -12,7 +12,6 @@ public class CardTable : MonoBehaviour
     public Transform table; //current table with grid layout
     public GridLayoutGroup gridLayout;
 
-    public Vector2 cellSizes = new Vector2();
 
     public List<GameObject> itemsToHide; //hide these items when calling the game complete screen. manually add these
     public List<GameObject> spawnedCards; //store cards in this inventory system.
@@ -53,10 +52,6 @@ public class CardTable : MonoBehaviour
         }
     }
 
-    private void ToggleCellDimensions(int x, int y)
-    {
-        gridLayout.cellSize = new Vector2(x, y);
-    }
     private void OnGameComplete()
     {
         SceneManager.LoadScene(0);
@@ -64,23 +59,16 @@ public class CardTable : MonoBehaviour
     
     private void LayoutFromDifficulty()
     {
-        int x = 250;
-        int y = 300;
-
         //this method changes the layout of the grid based on number of cards produced.
         switch(GameManager.gameMode)
         {
-            //cardsSpawnTotal = a * b
             case 0:
-                //ToggleCellDimensions(x,y);
                 DrawCards(2, 2);
                 break;
             case 1:
-                //ToggleCellDimensions(x-50, y-50);
                 DrawCards(2, 3);
                 break;
             case 2:
-                //ToggleCellDimensions(x-100, y-100);
                 DrawCards(4, 4);
                 break;
             default:
@@ -122,7 +110,6 @@ public class CardTable : MonoBehaviour
     {
         //use this method to randomly sort the card deck.
         int count = availableCardTypes.Count;
-        //int index = 0;
 
         for (int k = 0; k < availableCardTypes.Count; k++)
         {
@@ -143,12 +130,10 @@ public class CardTable : MonoBehaviour
             
             if (currentCard.isFlipped)
             {
-                FocusOnCard(currentCard.transform, new Vector2(1.1f, 1.1f));
                 flippedCards.Add(currentCard.gameObject);
             }
             else
             {
-                FocusOnCard(currentCard.transform, new Vector2(1f, 1f));
                 unflippedCards.Add(currentCard.gameObject);
             }
         }
@@ -229,14 +214,16 @@ public class CardTable : MonoBehaviour
     }
     IEnumerator CardMatchFound(GameObject card1, GameObject card2)
     {
+        card1.GetComponent<CardAnimations>().PlayMatchedAnimation();
+        card2.GetComponent<CardAnimations>().PlayMatchedAnimation();
+        
         soundManager.PlayMatchSound();
+
         //CLEANUP CARD TABLE
         card1.GetComponent<Image>().raycastTarget = false;//disable interaction
         card2.GetComponent<Image>().raycastTarget = false;
-        
+
         yield return new WaitForSeconds(1f);
-        card1.GetComponent<CardAnimations>().PlayMatchedAnimation();
-        card2.GetComponent<CardAnimations>().PlayMatchedAnimation();
 
         card1.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
         card2.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
@@ -247,9 +234,5 @@ public class CardTable : MonoBehaviour
         spawnedCards.Remove(card2);
         //RefreshCardTable();
         UpdateCardStateList();
-    }
-    private void FocusOnCard(Transform cardSize, Vector2 size)
-    {
-        cardSize.localScale = size;
     }
 }
