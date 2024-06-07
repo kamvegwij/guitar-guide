@@ -14,7 +14,6 @@ public class CardManager : MonoBehaviour //important: this script should be abov
     private void Start()
     {
         UpdateCard();
-
     }
     private void Update()
     {

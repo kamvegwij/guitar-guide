@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,6 +10,7 @@ public class MainMenu : MonoBehaviour
     public Button playBtn;
     public Button loadBtn;
     public Button quitBtn;
+    public Button saveBtn;
     public Slider difficultySlider;
 
     private void Start()
@@ -16,12 +18,23 @@ public class MainMenu : MonoBehaviour
         playBtn.onClick.AddListener(StartGame);
         loadBtn.onClick.AddListener(LoadGame);
         quitBtn.onClick.AddListener(QuitGame);
-
+        saveBtn.onClick.AddListener(SaveGame);
         difficultySlider.value = 0; //default
-        difficultySlider.onValueChanged.AddListener(val => ToggleDifficulty());
+        ToggleDifficulty(); //when menu reloads, get the difficulty.
+        difficultySlider.onValueChanged.AddListener(val => ToggleDifficulty());//when player changes 
+    }
+    private void SaveGame()
+    {
+        SaveData.SaveProgressData();
     }
     private void LoadGame()
     {
+        PlayerProgress progress = SaveData.LoadProgress();
+        GameManager.matches = progress.matches;
+        GameManager.totalCardFlips = progress.totalCardFlips;
+        GameManager.points = progress.points;
+        GameManager.comboStreak = progress.comboStreak;
+
         ChangeScene();
     }
     private void ToggleDifficulty()

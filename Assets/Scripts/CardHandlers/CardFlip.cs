@@ -8,6 +8,7 @@ public class CardFlip : MonoBehaviour
 {
     [SerializeField] private Sprite cardFront;
     [SerializeField] private Sprite cardBack;
+
     public bool canBeFlipped = false;
     public bool isFlipped = false;
 
@@ -31,7 +32,7 @@ public class CardFlip : MonoBehaviour
         cardImage.raycastTarget = false; //disable interaction when showing the cards in start.
         isFlipped = false;
 
-        Invoke("ShowCardStart", 2.0f);
+        Invoke("ShowCardStart", 5.0f);
     }
     private void Update()
     {
@@ -81,6 +82,17 @@ public class CardFlip : MonoBehaviour
         else
         {
             canBeFlipped = false;
+        }
+    }
+    private void AnimateCard()
+    {
+        if (!isFlipped)
+        {
+            cardImage.sprite = cardBack;
+        }
+        else
+        {
+            cardImage.sprite = cardFront;
         }
     }
 }
