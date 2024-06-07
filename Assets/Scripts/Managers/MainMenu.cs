@@ -33,6 +33,7 @@ public class MainMenu : MonoBehaviour
         GameManager.totalCardFlips = progress.totalCardFlips;
         GameManager.points = progress.points;
         GameManager.comboStreak = progress.comboStreak;
+
         ChangeScene();
     }
     private void ToggleDifficulty()

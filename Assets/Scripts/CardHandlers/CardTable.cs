@@ -35,7 +35,6 @@ public class CardTable : MonoBehaviour
         completeScreen.SetActive(false);
         availableCardTypes = new List<CardManager.CARD_TYPE>() { CardManager.CARD_TYPE.SUN , CardManager.CARD_TYPE.LION, CardManager.CARD_TYPE.CROC, CardManager.CARD_TYPE.TURTLE };
         LayoutFromDifficulty();
-        //UpdateCardStateList();
     }
     private void Update()
     {
@@ -161,6 +160,7 @@ public class CardTable : MonoBehaviour
         }
         spawnedCards.Clear();
         LayoutFromDifficulty();
+        RefreshCardTable();
     }
     public void HandleMatching()
     {
@@ -171,25 +171,22 @@ public class CardTable : MonoBehaviour
 
     private void CheckMatch()
     {
-        //if (flippedCards.Count < 2) return; //only start check when 2 or more cards are flipped
-
-        for (int i = 0; i < flippedCards.Count; i++) //O(n)^2
+        int index = 0;
+        for (int i = 0; i < flippedCards.Count -1 ; i++) //O(n)^2
         {
-            for (int x = 0; x < flippedCards.Count; x++)
-            {
                 CardManager card1 = flippedCards[i].GetComponent<CardManager>();
-                CardManager card2 = flippedCards[x].GetComponent<CardManager>();  
+                CardManager card2 = flippedCards[index+1].GetComponent<CardManager>();  
 
                 if (card1.cardType == card2.cardType && card1 != card2) //can't compare with self.
                 {
-                    CardMatchFound(card1.gameObject, card2.gameObject);
+                    GameManager.IncreaseMatchCount();
+                    StartCoroutine( CardMatchFound(card1.gameObject, card2.gameObject) );
                 }
                 else if (card1.cardType != card2.cardType)
                 {
-
-                    NoCardMatchFound(card1.gameObject, card2.gameObject);
+                    GameManager.CardMismatch();
+                    StartCoroutine( NoCardMatchFound(card1.gameObject, card2.gameObject) ) ;
                 }
-            }
         }
         
     }
@@ -202,35 +199,38 @@ public class CardTable : MonoBehaviour
         }
         GameManager.comboInfo = GameManager.comboStreak.ToString();
     }
-    private void NoCardMatchFound(GameObject card1, GameObject card2)
+    IEnumerator NoCardMatchFound(GameObject card1, GameObject card2)
     {
-        GameManager.CardMismatch();
+        
+        soundManager.PlayIncorrectSound();
+
+        yield return new WaitForSeconds(0.5f);
 
         card1.GetComponent<CardFlip>().isFlipped = false;
         card2.GetComponent<CardFlip>().isFlipped = false;
-
         UpdateCardStateList();
         RefreshCardTable();
 
-        soundManager.PlayIncorrectSound();
-
     }
-    private void CardMatchFound(GameObject card1, GameObject card2)
+    IEnumerator CardMatchFound(GameObject card1, GameObject card2)
     {
-        GameManager.IncreaseMatchCount();
-
+        
+        soundManager.PlayMatchSound();
         //CLEANUP CARD TABLE
         card1.GetComponent<Image>().raycastTarget = false;//disable interaction
         card2.GetComponent<Image>().raycastTarget = false;
 
+        yield return new WaitForSecondsRealtime(1f);
         card1.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
         card2.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
 
         RefreshCardTable();
+
         spawnedCards.Remove(card1);
         spawnedCards.Remove(card2);
+
         UpdateCardStateList();
-        soundManager.PlayMatchSound();
+        
     }
     private void FocusOnCard(Transform cardSize, Vector2 size)
     {

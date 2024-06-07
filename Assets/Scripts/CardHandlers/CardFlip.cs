@@ -8,6 +8,7 @@ public class CardFlip : MonoBehaviour
 {
     [SerializeField] private Sprite cardFront;
     [SerializeField] private Sprite cardBack;
+
     public bool canBeFlipped = false;
     public bool isFlipped = false;
 
@@ -81,6 +82,17 @@ public class CardFlip : MonoBehaviour
         else
         {
             canBeFlipped = false;
+        }
+    }
+    private void AnimateCard()
+    {
+        if (!isFlipped)
+        {
+            cardImage.sprite = cardBack;
+        }
+        else
+        {
+            cardImage.sprite = cardFront;
         }
     }
 }

@@ -36,6 +36,7 @@ public class GameManager
     {
         comboStreak = 1;
         incorrectSelections++;
+        totalCardFlips++;
     }
 
     
