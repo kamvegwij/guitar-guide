@@ -31,7 +31,7 @@ public class CardFlip : MonoBehaviour
         cardImage.raycastTarget = false; //disable interaction when showing the cards in start.
         isFlipped = false;
 
-        Invoke("ShowCardStart", 2.0f);
+        Invoke("ShowCardStart", 5.0f);
     }
     private void Update()
     {
