@@ -22,7 +22,6 @@ public class CardTable : MonoBehaviour
 
     public int currentTotalFlipped = 0;
     public int cardsSpawnTotal = 0; //use this to scale
-    private int maxIndex;
 
     private CardManager.CARD_TYPE getCardType;
     private SoundManager soundManager;
@@ -35,7 +34,6 @@ public class CardTable : MonoBehaviour
         
         completeScreen.SetActive(false);
         availableCardTypes = new List<CardManager.CARD_TYPE>() { CardManager.CARD_TYPE.SUN , CardManager.CARD_TYPE.LION, CardManager.CARD_TYPE.CROC, CardManager.CARD_TYPE.TURTLE };
-        maxIndex = availableCardTypes.Count;
         LayoutFromDifficulty();
         //UpdateCardStateList();
     }
@@ -48,7 +46,7 @@ public class CardTable : MonoBehaviour
                 completeScreen.SetActive(true);
                 for (int i = 0; i < itemsToHide.Count; i++)
                 {
-                    itemsToHide[i].gameObject.SetActive(false);
+                    //itemsToHide[i].gameObject.SetActive(false);
                 }
                 soundManager.PlayGameOverSound();
                 Invoke("OnGameComplete", 5f);
@@ -145,10 +143,12 @@ public class CardTable : MonoBehaviour
             CardFlip currentCard = spawnedCards[i].GetComponent<CardFlip>();
             if (currentCard.isFlipped)
             {
+                FocusOnCard(currentCard.transform, new Vector2(1.1f, 1.1f));
                 flippedCards.Add(currentCard.gameObject);
             }
             else
             {
+                FocusOnCard(currentCard.transform, new Vector2(1f, 1f));
                 unflippedCards.Add(currentCard.gameObject);
             }
         }
@@ -171,7 +171,6 @@ public class CardTable : MonoBehaviour
 
     private void CheckMatch()
     {
-        Debug.Log("Hello");
         //if (flippedCards.Count < 2) return; //only start check when 2 or more cards are flipped
 
         for (int i = 0; i < flippedCards.Count; i++) //O(n)^2
@@ -183,12 +182,12 @@ public class CardTable : MonoBehaviour
 
                 if (card1.cardType == card2.cardType && card1 != card2) //can't compare with self.
                 {
-                    RemoveMatchedCards(card1.gameObject, card2.gameObject);
+                    CardMatchFound(card1.gameObject, card2.gameObject);
                 }
                 else if (card1.cardType != card2.cardType)
                 {
-                    
-                    ResetFlipCards(card1.gameObject, card2.gameObject);
+
+                    NoCardMatchFound(card1.gameObject, card2.gameObject);
                 }
             }
         }
@@ -196,36 +195,45 @@ public class CardTable : MonoBehaviour
     }
     private void RefreshCardTable()
     {
-        //
         for (int i = 0; i < spawnedCards.Count; i++)
         {
             CardManager currentCard = spawnedCards[i].GetComponent<CardManager>();
             currentCard.GetComponent<CardManager>().UpdateCard();
         }
+        GameManager.comboInfo = GameManager.comboStreak.ToString();
     }
-    private void ResetFlipCards(GameObject card1, GameObject card2)
+    private void NoCardMatchFound(GameObject card1, GameObject card2)
     {
+        GameManager.CardMismatch();
+
         card1.GetComponent<CardFlip>().isFlipped = false;
         card2.GetComponent<CardFlip>().isFlipped = false;
+
         UpdateCardStateList();
         RefreshCardTable();
+
         soundManager.PlayIncorrectSound();
-        GameManager.totalCardFlips++;
-        GameManager.incorrectSelections++;
+
     }
-    private void RemoveMatchedCards(GameObject card1, GameObject card2)
+    private void CardMatchFound(GameObject card1, GameObject card2)
     {
+        GameManager.IncreaseMatchCount();
+
         //CLEANUP CARD TABLE
         card1.GetComponent<Image>().raycastTarget = false;//disable interaction
         card2.GetComponent<Image>().raycastTarget = false;
 
         card1.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
         card2.GetComponent<CardManager>().cardType = CardManager.CARD_TYPE.BLANK;
+
         RefreshCardTable();
         spawnedCards.Remove(card1);
         spawnedCards.Remove(card2);
         UpdateCardStateList();
         soundManager.PlayMatchSound();
-        GameManager.totalScore++; //increase score
+    }
+    private void FocusOnCard(Transform cardSize, Vector2 size)
+    {
+        cardSize.localScale = size;
     }
 }
