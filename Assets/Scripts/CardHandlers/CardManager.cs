@@ -15,10 +15,6 @@ public class CardManager : MonoBehaviour //important: this script should be abov
     {
         UpdateCard();
     }
-    private void Update()
-    {
-        
-    }
     public void UpdateCard()
     {
         switch(cardType) 
