@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,9 +34,9 @@ public class ScaleGridLayout : MonoBehaviour
         int columns = Mathf.CeilToInt(Mathf.Sqrt(cardsSpawned));
         int rows = Mathf.CeilToInt((float)cardsSpawned / columns);
 
-        float cellWidth = rectWidth / columns;
-        float cellHeight = rectHeight / rows;
+        float cardX = rectWidth / columns;
+        float cardY = rectHeight / rows;
 
-        gridLayout.cellSize = new Vector2(cellWidth/2, cellHeight/1.5f);
+        gridLayout.cellSize = new Vector2(cardX / 2, cardY / 1.5f);
     }
 }
